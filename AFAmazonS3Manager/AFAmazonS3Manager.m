@@ -186,14 +186,14 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 }
 
 - (void)postObjectWithData:(NSData *)data
-                  fileName:(NSString *)fileName
+                  mimeType:(NSString*)mimeType
            destinationPath:(NSString *)destinationPath
                 parameters:(NSDictionary *)parameters
                   progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
                    success:(void (^)(id responseObject))success
                    failure:(void (^)(NSError *error))failure
 {
-    [self setObjectWithMethod:@"POST" fileName:fileName data:data destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
+    [self setObjectWithMethod:@"POST" data:data mimeType:mimeType destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
 }
 
 - (void)postObjectWithFile:(NSString *)path
@@ -248,7 +248,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
     
     [self setObjectWithMethod:method
                          data:data
-                     filename:[filePath lastPathComponent]
+                     mimeType:[response MIMEType]
               destinationPath:destinationPath
                    parameters:parameters
                      progress:progress
@@ -258,15 +258,13 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 
 - (void)setObjectWithMethod:(NSString *)method
                        data:(NSData *)data
-                   fileName:(NSString*)fileName
+                   mimeType:(NSString*)mimeType
             destinationPath:(NSString *)destinationPath
                  parameters:(NSDictionary *)parameters
                    progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
                     success:(void (^)(id responseObject))success
                     failure:(void (^)(NSError *error))failure
 {
-    NSURLResponse *response = nil;
-    
     destinationPath = [destinationPath stringByReplacingOccurrencesOfString:@" " withString:@"+"];
     
     NSMutableURLRequest *request = nil;
@@ -274,10 +272,10 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
         NSError *requestError = nil;
         request = [self.requestSerializer multipartFormRequestWithMethod:method URLString:[[self.baseURL URLByAppendingPathComponent:destinationPath] absoluteString] parameters:parameters constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
             if (![parameters valueForKey:@"key"]) {
-                [formData appendPartWithFormData:[fileName dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
+                [formData appendPartWithFormData:[[destinationPath lastPathComponent] dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
             }
             
-            [formData appendPartWithFileData:data name:@"file" fileName:fileName mimeType:[response MIMEType]];
+            [formData appendPartWithFileData:data name:@"file" fileName:[destinationPath lastPathComponent] mimeType:mimeType];
         } error:&requestError];
         
         if (requestError || !request) {
