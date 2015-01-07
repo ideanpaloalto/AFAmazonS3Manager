@@ -186,13 +186,14 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 }
 
 - (void)postObjectWithData:(NSData *)data
+                  fileName:(NSString *)fileName
            destinationPath:(NSString *)destinationPath
                 parameters:(NSDictionary *)parameters
                   progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
                    success:(void (^)(id responseObject))success
                    failure:(void (^)(NSError *error))failure
 {
-    [self setObjectWithMethod:@"POST" data:data key:@"key" destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
+    [self setObjectWithMethod:@"POST" fileName:fileName data:data destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
 }
 
 - (void)postObjectWithFile:(NSString *)path
@@ -247,7 +248,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
     
     [self setObjectWithMethod:method
                          data:data
-                          key:[filePath lastPathComponent]
+                     filename:[filePath lastPathComponent]
               destinationPath:destinationPath
                    parameters:parameters
                      progress:progress
@@ -257,7 +258,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 
 - (void)setObjectWithMethod:(NSString *)method
                        data:(NSData *)data
-                        key:(NSString*)key
+                   fileName:(NSString*)fileName
             destinationPath:(NSString *)destinationPath
                  parameters:(NSDictionary *)parameters
                    progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
@@ -273,10 +274,10 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
         NSError *requestError = nil;
         request = [self.requestSerializer multipartFormRequestWithMethod:method URLString:[[self.baseURL URLByAppendingPathComponent:destinationPath] absoluteString] parameters:parameters constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
             if (![parameters valueForKey:@"key"]) {
-                [formData appendPartWithFormData:[key dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
+                [formData appendPartWithFormData:[fileName dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
             }
             
-            [formData appendPartWithFileData:data name:@"file" fileName:key mimeType:[response MIMEType]];
+            [formData appendPartWithFileData:data name:@"file" fileName:fileName mimeType:[response MIMEType]];
         } error:&requestError];
         
         if (requestError || !request) {
