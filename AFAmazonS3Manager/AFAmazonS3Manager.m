@@ -36,10 +36,10 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
     if (!self) {
         return nil;
     }
-
+    
     self.requestSerializer = [AFAmazonS3RequestSerializer serializer];
     self.responseSerializer = [AFXMLParserResponseSerializer serializer];
-
+    
     return self;
 }
 
@@ -50,9 +50,9 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
     if (!self) {
         return nil;
     }
-
+    
     [self.requestSerializer setAccessKeyID:accessKey secret:secret];
-
+    
     return self;
 }
 
@@ -60,7 +60,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
     if (!_s3_baseURL) {
         return self.requestSerializer.endpointURL;
     }
-
+    
     return _s3_baseURL;
 }
 
@@ -82,7 +82,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
             failure(error);
         }
     }];
-
+    
     [self.operationQueue addOperation:requestOperation];
 }
 
@@ -110,7 +110,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
           failure:(void (^)(NSError *error))failure
 {
     [self enqueueS3RequestOperationWithMethod:@"PUT" path:bucket parameters:parameters success:success failure:failure];
-
+    
 }
 
 - (void)deleteBucket:(NSString *)bucket
@@ -136,7 +136,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
             failure(error);
         }
     }];
-
+    
     [self.operationQueue addOperation:requestOperation];
 }
 
@@ -155,9 +155,9 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
             failure(error);
         }
     }];
-
+    
     [requestOperation setDownloadProgressBlock:progress];
-
+    
     [self.operationQueue addOperation:requestOperation];
 }
 
@@ -177,11 +177,11 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
             failure(error);
         }
     }];
-
+    
     requestOperation.outputStream = outputStream;
-
+    
     [requestOperation setDownloadProgressBlock:progress];
-
+    
     [self.operationQueue addOperation:requestOperation];
 }
 
@@ -192,7 +192,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
                    success:(void (^)(id responseObject))success
                    failure:(void (^)(NSError *error))failure
 {
-
+    [self setObjectWithMethod:@"POST" data:data key:@"key" destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
 }
 
 - (void)postObjectWithFile:(NSString *)path
@@ -232,32 +232,53 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 {
     NSMutableURLRequest *fileRequest = [NSMutableURLRequest requestWithURL:[NSURL fileURLWithPath:filePath]];
     fileRequest.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
-
+    
     NSURLResponse *response = nil;
     NSError *fileError = nil;
     NSData *data = [NSURLConnection sendSynchronousRequest:fileRequest returningResponse:&response error:&fileError];
-
+    
     if (fileError || !response || !data) {
         if (failure) {
             failure(fileError);
         }
-
+        
         return;
     }
+    
+    [self setObjectWithMethod:method
+                         data:data
+                          key:[filePath lastPathComponent]
+              destinationPath:destinationPath
+                   parameters:parameters
+                     progress:progress
+                      success:success
+                      failure:failure];
+}
 
+- (void)setObjectWithMethod:(NSString *)method
+                       data:(NSData *)data
+                        key:(NSString*)key
+            destinationPath:(NSString *)destinationPath
+                 parameters:(NSDictionary *)parameters
+                   progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
+                    success:(void (^)(id responseObject))success
+                    failure:(void (^)(NSError *error))failure
+{
+    NSURLResponse *response = nil;
+    
     destinationPath = [destinationPath stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-
+    
     NSMutableURLRequest *request = nil;
     if ([method compare:@"POST" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
         NSError *requestError = nil;
         request = [self.requestSerializer multipartFormRequestWithMethod:method URLString:[[self.baseURL URLByAppendingPathComponent:destinationPath] absoluteString] parameters:parameters constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
             if (![parameters valueForKey:@"key"]) {
-                [formData appendPartWithFormData:[[filePath lastPathComponent] dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
+                [formData appendPartWithFormData:[key dataUsingEncoding:NSUTF8StringEncoding] name:@"key"];
             }
-
-            [formData appendPartWithFileData:data name:@"file" fileName:[filePath lastPathComponent] mimeType:[response MIMEType]];
+            
+            [formData appendPartWithFileData:data name:@"file" fileName:key mimeType:[response MIMEType]];
         } error:&requestError];
-
+        
         if (requestError || !request) {
             if (failure) {
                 failure(requestError);
@@ -269,7 +290,7 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
         request = [self.requestSerializer requestWithMethod:method URLString:[[self.baseURL URLByAppendingPathComponent:destinationPath] absoluteString] parameters:parameters error:nil];
         request.HTTPBody = data;
     }
-
+    
     AFHTTPRequestOperation *requestOperation = [self HTTPRequestOperationWithRequest:request success:^(__unused AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
             success(responseObject);
@@ -279,9 +300,9 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
             failure(error);
         }
     }];
-
+    
     [requestOperation setUploadProgressBlock:progress];
-
+    
     [self.operationQueue addOperation:requestOperation];
 }
 
@@ -295,10 +316,10 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 
 - (id)copyWithZone:(NSZone *)zone {
     AFAmazonS3Manager *manager = [[[self class] allocWithZone:zone] initWithBaseURL:_s3_baseURL];
-
+    
     manager.requestSerializer = [self.requestSerializer copyWithZone:zone];
     manager.responseSerializer = [self.responseSerializer copyWithZone:zone];
-
+    
     return manager;
 }
 
