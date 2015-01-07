@@ -203,6 +203,26 @@
 /**
  Adds an object to a bucket for a user that has write access to the bucket. A success response indicates the object was successfully stored; if the object already exists, it will be overwritten.
  
+ @param path NSData of the data to upload.
+ @param destinationPath The destination path for the remote file, including its name.
+ @param parameters The parameters to be encoded and set in the request HTTP body.
+ @param progress A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes three arguments: the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
+ @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
+ @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
+ 
+ @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
+ */
+- (void)putObjectWithData:(NSData *)data
+                 mimeType:(NSString*)mimeType
+          destinationPath:(NSString *)destinationPath
+               parameters:(NSDictionary *)parameters
+                 progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
+                  success:(void (^)(id responseObject))success
+                  failure:(void (^)(NSError *error))failure;
+
+/**
+ Adds an object to a bucket for a user that has write access to the bucket. A success response indicates the object was successfully stored; if the object already exists, it will be overwritten.
+ 
  @param path The path to the local file.
  @param destinationPath The destination path for the remote file, including its name.
  @param parameters The parameters to be encoded and set in the request HTTP body.
