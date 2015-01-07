@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.social_media_url = "https://twitter.com/AFNetworking"
   s.license      = 'MIT'
   s.author       = { "Mattt Thompson" => "m@mattt.me" }
-  s.source       = { :git => "https://github.com/AFNetworking/AFAmazonS3Manager.git",
+  s.source       = { :git => "https://github.com/ideanpaloalto/AFAmazonS3Manager.git",
                      :tag => "3.0.0" }
 
   s.ios.deployment_target = '6.0'
