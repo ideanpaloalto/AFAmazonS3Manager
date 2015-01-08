@@ -213,7 +213,6 @@
  @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
  */
 - (void)putObjectWithData:(NSData *)data
-                 mimeType:(NSString*)mimeType
           destinationPath:(NSString *)destinationPath
                parameters:(NSDictionary *)parameters
                  progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
