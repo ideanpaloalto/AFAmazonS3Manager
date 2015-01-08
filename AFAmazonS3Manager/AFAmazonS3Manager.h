@@ -30,7 +30,7 @@
 
 /**
  The base URL for the S3 manager.
- 
+
  @discussion By default, the `baseURL` of `AFAmazonS3Manager` is derived from the `bucket` and `region` values. If `baseURL` is set directly, it will override the default `baseURL` and disregard values set for the `bucket`, `region`, and `useSSL` properties.
  */
 @property (readonly, nonatomic, strong) NSURL *baseURL;
@@ -42,9 +42,9 @@
 
 /**
  Initializes and returns a newly allocated Amazon S3 client with specified credentials.
- 
+
  This is the designated initializer.
- 
+
  @param accessKey The AWS access key.
  @param secret The AWS secret.
  */
@@ -53,7 +53,7 @@
 
 /**
  Creates and enqueues a request operation to the client's operation queue.
- 
+
  @param method The HTTP method for the request.
  @param path The path to be appended to the HTTP client's base URL and used as the request URL.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
@@ -71,7 +71,7 @@
 
 /**
  Returns a list of all buckets owned by the authenticated request sender.
- 
+
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
  */
@@ -85,7 +85,7 @@
 
 /**
  Lists information about the objects in a bucket for a user that has read access to the bucket.
- 
+
  @param bucket The S3 bucket to get.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
@@ -96,7 +96,7 @@
 
 /**
  Creates a new bucket belonging to the account of the authenticated request sender. Optionally, you can specify a EU (Ireland) or US-West (N. California) location constraint.
- 
+
  @param bucket The S3 bucket to create.
  @param parameters The parameters to be encoded and set in the request HTTP body.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
@@ -109,7 +109,7 @@
 
 /**
  Deletes the specified bucket. All objects in the bucket must be deleted before the bucket itself can be deleted.
- 
+
  @param bucket The S3 bucket to be delete.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
@@ -124,7 +124,7 @@
 
 /**
  Retrieves information about an object for a user with read access without fetching the object.
- 
+
  @param path The object path.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
@@ -135,7 +135,7 @@
 
 /**
  Gets an object for a user that has read access to the object.
- 
+
  @param path The object path.
  @param progress A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes three arguments: the number of bytes read since the last time the download progress block was called, the total bytes read, and the total bytes expected to be read during the request, as initially determined by the expected content size of the `NSHTTPURLResponse` object. This block may be called multiple times, and will execute on the main thread.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
@@ -148,7 +148,7 @@
 
 /**
  Gets an object for a user that has read access to the object.
- 
+
  @param path The object path.
  @param outputStream The `NSOutputStream` object receiving data from the request.
  @param progress A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes three arguments: the number of bytes read since the last time the download progress block was called, the total bytes read, and the total bytes expected to be read during the request, as initially determined by the expected content size of the `NSHTTPURLResponse` object. This block may be called multiple times, and will execute on the main thread.
@@ -163,14 +163,14 @@
 
 /**
  Adds an object to a bucket using forms.
- 
+
  @param data NSData of the data to upload.
  @param destinationPath The destination path for the remote file.
  @param parameters The parameters to be encoded and set in the request HTTP body.
  @param progress A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes three arguments: the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
- 
+
  @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
  */
 - (void)postObjectWithData:(NSData *)data
@@ -183,14 +183,14 @@
 
 /**
  Adds an object to a bucket using forms.
- 
+
  @param path The path to the local file.
  @param destinationPath The destination path for the remote file.
  @param parameters The parameters to be encoded and set in the request HTTP body.
  @param progress A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes three arguments: the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
- 
+
  @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
  */
 - (void)postObjectWithFile:(NSString *)path
@@ -202,14 +202,14 @@
 
 /**
  Adds an object to a bucket for a user that has write access to the bucket. A success response indicates the object was successfully stored; if the object already exists, it will be overwritten.
- 
+
  @param path NSData of the data to upload.
  @param destinationPath The destination path for the remote file, including its name.
  @param parameters The parameters to be encoded and set in the request HTTP body.
  @param progress A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes three arguments: the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
- 
+
  @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
  */
 - (void)putObjectWithData:(NSData *)data
@@ -222,14 +222,14 @@
 
 /**
  Adds an object to a bucket for a user that has write access to the bucket. A success response indicates the object was successfully stored; if the object already exists, it will be overwritten.
- 
+
  @param path The path to the local file.
  @param destinationPath The destination path for the remote file, including its name.
  @param parameters The parameters to be encoded and set in the request HTTP body.
  @param progress A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes three arguments: the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
- 
+
  @discussion `destinationPath` is relative to the bucket's root, and will create any intermediary directories as necessary. For example, specifying "/a/b/c.txt" will create the "/a" and / or "/a/b" directories within the bucket, if they do not already exist, and upload the source file as "c.txt" into "/a/b".
  */
 - (void)putObjectWithFile:(NSString *)path
@@ -241,7 +241,7 @@
 
 /**
  Deletes the specified object. Once deleted, there is no method to restore or undelete an object.
- 
+
  @param path The path for the remote file to be deleted.
  @param success A block object to be executed when the request operation finishes successfully. This block has no return value and takes a single argument: the response object from the server.
  @param failure A block object to be executed when the request operation finishes unsuccessfully, or that finishes successfully, but encountered an error while parsing the response data. This block has no return value and takes a single argument: the `NSError` object describing error that occurred.
@@ -258,7 +258,7 @@
 
 /**
  ## Error Domain
- 
+
  `AFAmazonS3ManagerErrorDomain`
  AFAmazonS3Manager errors. Error codes for `AFAmazonS3ManagerErrorDomain` correspond to codes in `NSURLErrorDomain`.
  */
