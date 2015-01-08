@@ -207,14 +207,13 @@ NSString * const AFAmazonS3ManagerErrorDomain = @"com.alamofire.networking.s3.er
 }
 
 - (void)putObjectWithData:(NSData *)data
-                 mimeType:(NSString*)mimeType
           destinationPath:(NSString *)destinationPath
                parameters:(NSDictionary *)parameters
                  progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
                   success:(void (^)(id responseObject))success
                   failure:(void (^)(NSError *error))failure
 {
-    [self setObjectWithMethod:@"PUT" data:data mimeType:mimeType destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
+    [self setObjectWithMethod:@"PUT" data:data mimeType:nil destinationPath:destinationPath parameters:parameters progress:progress success:success failure:failure];
 }
 
 - (void)putObjectWithFile:(NSString *)path
